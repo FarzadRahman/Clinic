@@ -16,6 +16,7 @@
 <body>
 @include('layouts.navbar')
 
+@yield('fullScreen')
 <div class="container mt-5">
     @yield('content')
 </div>
