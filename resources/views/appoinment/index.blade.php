@@ -9,6 +9,33 @@
     </style>
 @endsection
 @section('content')
+    <!--  Comment  Modal -->
+    <div style="text-align: center;" class="modal" id="editModal" >
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Appointment</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body" id="editModalBody">
+
+
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
     <div class="card">
         <div class="card-header">
             <h4 align="center"><b>Create New Appointment</b></h4>
@@ -87,15 +114,23 @@
         </div>
 
         <div class="card-body">
-            <div class="form-group col-md-4">
-                <label><b>Doctor</b></label>
-                <select id="doctorId" class="form-control" onchange="reloadTable()">
-                    <option value="">Select Doctor</option>
-                    @foreach($doctors as $doctor)
-                        <option value="{{$doctor->id}}">{{$doctor->doctorName}}</option>
-                    @endforeach
-                </select>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label><b>Doctor</b></label>
+                    <select id="doctorId" class="form-control" onchange="reloadTable()">
+                        <option value="">Select Doctor</option>
+                        @foreach($doctors as $doctor)
+                            <option value="{{$doctor->id}}">{{$doctor->doctorName}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label><b>Date</b></label>
+                    <input class="form-control datepicker" onchange="reloadTable()" value="{{date('Y-m-d')}}" id="appointmentTime" placeholder="select date">
+                </div>
             </div>
+
             <table id="appointmentTable" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                 <tr>
@@ -160,7 +195,7 @@
                     "type": "POST",
                     data: function (d) {
                         d._token = "{{csrf_token()}}";
-                        // d.date=$('#date1').val();
+                        d.date=$('#appointmentTime').val();
                         d.doctorId=$('#doctorId').val();
                         // d.statusId=$('#statusId').val();
                     },
@@ -179,8 +214,8 @@
                             '  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">\n' +
                             '  </button>\n' +
                             '  <div class="dropdown-menu">\n' +
-                            '    <a class="dropdown-item" href="#">In</a>\n' +
-                            '    <a class="dropdown-item" href="#">Edit</a>\n' +
+                            '    <a class="dropdown-item" onclick="startInQueue(this)" data-panel-id="'+data.appointmentId+'">In</a>\n' +
+                            '    <a class="dropdown-item" onclick="edit(this)" data-panel-id="'+data.appointmentId+'">Edit</a>\n' +
                             '    <a class="dropdown-item" href="#">Cancel</a>\n' +
                             '  </div>\n' +
                             '</div> ';
@@ -192,6 +227,40 @@
 
         function reloadTable() {
             dataTable.ajax.reload();
+        }
+
+        function startInQueue(x) {
+            var id=$(x).data('panel-id');
+
+            $.ajax({
+                type: 'POST',
+                url: "{!! route('appointment.startInQueue') !!}",
+                cache: false,
+                data: {_token: "{{csrf_token()}}",'id': id},
+                success: function (data) {
+
+                    console.log(data);
+                    reloadTable();
+                }
+            });
+
+        }
+        function edit(x) {
+            var id=$(x).data('panel-id');
+
+            // alert(id);
+            $.ajax({
+                type: 'POST',
+                url: "{!! route('appointment.edit') !!}",
+                cache: false,
+                data: {_token: "{{csrf_token()}}",'id': id},
+                    success: function (data) {
+                    $("#editModalBody").html(data);
+                    $("#editModal").modal();
+                    // console.log(data);
+                }
+            });
+
         }
     </script>
 
