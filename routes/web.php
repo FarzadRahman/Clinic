@@ -25,6 +25,7 @@ Route::post('appointment/getData', 'AppoinmentController@getData')->name('appoin
 Route::post('appointment/edit', 'AppoinmentController@edit')->name('appointment.edit');
 Route::post('appointment/update/{id}', 'AppoinmentController@update')->name('appointment.update');
 Route::post('appointment/startInQueue/', 'AppoinmentController@startInQueue')->name('appointment.startInQueue');
+Route::post('appointment/cancel/', 'AppoinmentController@cancel')->name('appointment.cancel');
 
 
 Route::get('appointment/run/serial', 'AppoinmentController@runSerial')->name('appointment.runSerial');

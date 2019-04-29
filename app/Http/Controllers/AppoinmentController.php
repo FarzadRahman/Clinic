@@ -6,6 +6,7 @@ use App\Appointment;
 use App\Department;
 use App\Doctor;
 use App\Patient;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -14,6 +15,7 @@ class AppoinmentController extends Controller
 {
     public function __construct()
     {
+        date_default_timezone_set('Asia/Dhaka');
         $this->middleware('auth');
     }
     public function index(){
@@ -76,7 +78,6 @@ class AppoinmentController extends Controller
         $doctors=Doctor::get();
         $departments=Department::get();
 
-//        return $appointment;
         return view('appoinment.edit',compact('appointment','doctors','departments'));
     }
 
@@ -98,13 +99,31 @@ class AppoinmentController extends Controller
 
     }
 
-    public function runSerial(){
-
-        return view('appoinment.runSerial');
-    }
 
     public function startInQueue(Request $r){
-        Appointment::where('id',$r->id)->update(['status'=>'in']);
+        Appointment::where('id',$r->id)->update(['status'=>'in','start_at'=>Carbon::now()]);
 
     }
+    public function cancel(Request $r){
+        Appointment::where('id',$r->id)->update(['status'=>'canceled']);
+
+    }
+
+    public function runSerial(){
+
+        $appointment=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
+            'appointment.id as appointmentId','department.departmentName')
+            ->where('status','in')
+            ->where('appointmentTime',date('Y-m-d'))
+            ->leftJoin('patient','patient.id','appointment.fkpatientId')
+            ->leftJoin('doctor','doctor.id','appointment.fkdoctorId')
+            ->leftJoin('department','department.id','appointment.fkDepartmentId')
+            ->orderBy('start_at','desc')
+            ->first();
+
+
+//        return $appointment;
+        return view('appoinment.runSerial',compact('appointment'));
+    }
+
 }

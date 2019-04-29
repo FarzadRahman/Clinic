@@ -180,6 +180,7 @@
 
 
         $(document).ready(function () {
+
             dataTable = $('#appointmentTable').DataTable({
                 rowReorder: {
                     selector: 'td:nth-child(0)'
@@ -216,7 +217,7 @@
                             '  <div class="dropdown-menu">\n' +
                             '    <a class="dropdown-item" onclick="startInQueue(this)" data-panel-id="'+data.appointmentId+'">In</a>\n' +
                             '    <a class="dropdown-item" onclick="edit(this)" data-panel-id="'+data.appointmentId+'">Edit</a>\n' +
-                            '    <a class="dropdown-item" href="#">Cancel</a>\n' +
+                            '    <a class="dropdown-item" onclick="cancel(this)" data-panel-id="'+data.appointmentId+'">Cancel</a>\n' +
                             '  </div>\n' +
                             '</div> ';
                         },
@@ -239,12 +240,29 @@
                 data: {_token: "{{csrf_token()}}",'id': id},
                 success: function (data) {
 
-                    console.log(data);
+                    toastr["success"]("Appointment In", "Success");
+
+                    // console.log(data);
+                    reloadTable();
+                }
+            });
+        }
+        function cancel(x) {
+            var id=$(x).data('panel-id');
+
+            $.ajax({
+                type: 'POST',
+                url: "{!! route('appointment.cancel') !!}",
+                cache: false,
+                data: {_token: "{{csrf_token()}}",'id': id},
+                success: function (data) {
+                    toastr["error"]("Appointment Canceled", "Warning")
                     reloadTable();
                 }
             });
 
         }
+
         function edit(x) {
             var id=$(x).data('panel-id');
 
