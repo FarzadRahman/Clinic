@@ -110,7 +110,6 @@ class AppoinmentController extends Controller
     }
 
     public function runSerial(){
-
         $appointment=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
             'appointment.id as appointmentId','department.departmentName')
             ->where('status','in')
@@ -123,7 +122,24 @@ class AppoinmentController extends Controller
 
 
 //        return $appointment;
+
+
         return view('appoinment.runSerial',compact('appointment'));
+    }
+
+
+    public function runSerialGetData(){
+        $appointments=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
+            'appointment.id as appointmentId','department.departmentName')
+            ->where('status','in')
+            ->where('appointmentTime',date('Y-m-d'))
+            ->leftJoin('patient','patient.id','appointment.fkpatientId')
+            ->leftJoin('doctor','doctor.id','appointment.fkdoctorId')
+            ->leftJoin('department','department.id','appointment.fkDepartmentId')
+            ->orderBy('start_at','desc')
+            ->get();
+
+        return view('appoinment.runSerialGetData',compact('appointments'));
     }
 
 }
