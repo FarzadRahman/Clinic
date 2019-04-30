@@ -28,4 +28,9 @@ Route::post('appointment/startInQueue/', 'AppoinmentController@startInQueue')->n
 Route::post('appointment/cancel/', 'AppoinmentController@cancel')->name('appointment.cancel');
 
 
+//Password
+Route::get('account/password','HomeController@password')->name('account.password');
+Route::post('account/password','HomeController@changePassword')->name('account.changePassword');
+
 Route::get('appointment/run/serial', 'AppoinmentController@runSerial')->name('appointment.runSerial');
+Route::post('appointment/run/serial', 'AppoinmentController@runSerialGetData')->name('appointment.runSerialGetData');

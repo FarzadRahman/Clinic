@@ -18,7 +18,9 @@
 </head>
 <body>
 @include('layouts.navbar')
-
+@if(Session::has('message'))
+    <p class="alert alert-info">{{ Session::get('message') }}</p>
+@endif
 @yield('fullScreen')
 <div class="container mt-5">
     @yield('content')

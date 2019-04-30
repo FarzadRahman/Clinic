@@ -9,6 +9,7 @@ use App\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class AppoinmentController extends Controller
@@ -110,8 +111,28 @@ class AppoinmentController extends Controller
     }
 
     public function runSerial(){
-
         $appointment=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
+            'appointment.id as appointmentId','department.departmentName'
+//            ,DB::raw("date_format(max(start_at),'%H:%i:%s %p')")
+            ,MAX('start_at'))
+            ->where('status','in')
+            ->where('appointmentTime',date('Y-m-d'))
+            ->leftJoin('patient','patient.id','appointment.fkpatientId')
+            ->leftJoin('doctor','doctor.id','appointment.fkdoctorId')
+            ->leftJoin('department','department.id','appointment.fkDepartmentId')
+            ->groupBy('fkdoctorId')
+            ->get();
+
+
+        return $appointment;
+
+
+        return view('appoinment.runSerial',compact('appointment'));
+    }
+
+
+    public function runSerialGetData(){
+        $appointments=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
             'appointment.id as appointmentId','department.departmentName')
             ->where('status','in')
             ->where('appointmentTime',date('Y-m-d'))
@@ -119,11 +140,9 @@ class AppoinmentController extends Controller
             ->leftJoin('doctor','doctor.id','appointment.fkdoctorId')
             ->leftJoin('department','department.id','appointment.fkDepartmentId')
             ->orderBy('start_at','desc')
-            ->first();
+            ->get();
 
-
-//        return $appointment;
-        return view('appoinment.runSerial',compact('appointment'));
+        return view('appoinment.runSerialGetData',compact('appointments'));
     }
 
 }
