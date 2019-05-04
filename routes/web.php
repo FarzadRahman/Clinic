@@ -22,6 +22,7 @@ Route::get('/', 'HomeController@index')->name('welcome');
 Route::get('appointment/', 'AppoinmentController@index')->name('appointment.index');
 Route::post('appointment/insert', 'AppoinmentController@insert')->name('appointment.insert');
 Route::post('appointment/getData', 'AppoinmentController@getData')->name('appointment.getData');
+Route::post('appointment/getAllApointmentData', 'AppoinmentController@getAllApointmentData')->name('appointment.getAllApointmentData');
 Route::post('appointment/edit', 'AppoinmentController@edit')->name('appointment.edit');
 Route::post('appointment/update/{id}', 'AppoinmentController@update')->name('appointment.update');
 Route::post('appointment/startInQueue/', 'AppoinmentController@startInQueue')->name('appointment.startInQueue');

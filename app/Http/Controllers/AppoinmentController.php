@@ -67,6 +67,26 @@ class AppoinmentController extends Controller
         return $datatables->make(true);
     }
 
+    public function getAllApointmentData(Request $r){
+        $appointments=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
+            'appointment.id as appointmentId','department.departmentName')
+            ->leftJoin('patient','patient.id','appointment.fkpatientId')
+            ->leftJoin('doctor','doctor.id','appointment.fkdoctorId')
+            ->leftJoin('department','department.id','appointment.fkDepartmentId');
+
+        if($r->doctorId){
+            $appointments=$appointments->where('fkdoctorId',$r->doctorId);
+        }
+
+        if($r->date){
+            $appointments=$appointments->where('appointmentTime',$r->date);
+        }
+
+        $datatables = Datatables::of($appointments);
+        return $datatables->make(true);
+    }
+
+
     public function edit(Request $r){
 
         $appointment=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
@@ -111,37 +131,26 @@ class AppoinmentController extends Controller
     }
 
     public function runSerial(){
-        $appointment=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
-            'appointment.id as appointmentId','department.departmentName'
-//            ,DB::raw("date_format(max(start_at),'%H:%i:%s %p')")
-            ,MAX('start_at'))
-            ->where('status','in')
-            ->where('appointmentTime',date('Y-m-d'))
-            ->leftJoin('patient','patient.id','appointment.fkpatientId')
-            ->leftJoin('doctor','doctor.id','appointment.fkdoctorId')
-            ->leftJoin('department','department.id','appointment.fkDepartmentId')
-            ->groupBy('fkdoctorId')
-            ->get();
 
-
-        return $appointment;
-
-
-        return view('appoinment.runSerial',compact('appointment'));
+        return view('appoinment.runSerial');
     }
 
 
     public function runSerialGetData(){
-        $appointments=Appointment::select('appointment.*','appointment.id as appointmentId','doctor.doctorName','patient.*',
-            'appointment.id as appointmentId','department.departmentName')
-            ->where('status','in')
+
+        $appointments= $appointment=Appointment::select('serialNumber','doctor.doctorName','patient.*',
+            'department.departmentName')
             ->where('appointmentTime',date('Y-m-d'))
             ->leftJoin('patient','patient.id','appointment.fkpatientId')
             ->leftJoin('doctor','doctor.id','appointment.fkdoctorId')
             ->leftJoin('department','department.id','appointment.fkDepartmentId')
-            ->orderBy('start_at','desc')
+            ->whereIn('appointment.start_at', function($query){
+                $query->select(DB::raw('MAX(start_at)'))
+                    ->from('appointment')
+                    ->where('status','in')
+                    ->groupBy('appointment.fkdoctorId');
+            })
             ->get();
-
         return view('appoinment.runSerialGetData',compact('appointments'));
     }
 
