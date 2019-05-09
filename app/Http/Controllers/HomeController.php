@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Department;
+use App\Doctor;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,8 +28,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $doctors=Doctor::get();
+        $departments=Department::get();
 
-        return view('welcome');
+        return view('welcome',compact('doctors','departments'));
     }
 
     public function password(){
