@@ -22,9 +22,6 @@ class PrescriptionController extends Controller
             ->leftJoin('doctor','doctor.id','appointment.fkdoctorId')
             ->findOrFail($id);
 
-
-//       return $appointment;
-
        return view('prescription.pdf',compact('appointment'));
 
 

@@ -79,18 +79,7 @@
                 <tbody>
 
                 </tbody>
-                {{--<tfoot>--}}
-                {{--<tr>--}}
-                    {{--<th>Name</th>--}}
-                    {{--<th>Mobile</th>--}}
-                    {{--<th>Sex</th>--}}
-                    {{--<th>Age</th>--}}
-                    {{--<th>Time</th>--}}
-                    {{--<th>Serial</th>--}}
-                    {{--<th>Doctor</th>--}}
-                    {{--<th>Action</th>--}}
-                {{--</tr>--}}
-                {{--</tfoot>--}}
+
             </table>
         </div>
     </div>
@@ -150,6 +139,7 @@
                                 '  <div class="dropdown-menu">\n' +
                                 '    <a class="dropdown-item" onclick="startInQueue(this)" data-panel-id="'+data.appointmentId+'">In</a>\n' +
                                 '    <a class="dropdown-item" onclick="edit(this)" data-panel-id="'+data.appointmentId+'">Edit</a>\n' +
+                                '    <a class="dropdown-item" onclick="print(this)" data-panel-id="'+data.appointmentId+'">Print</a>\n' +
                                 '    <a class="dropdown-item" onclick="cancel(this)" data-panel-id="'+data.appointmentId+'">Cancel</a>\n' +
                                 '  </div>\n' +
                                 '</div> ';
@@ -161,6 +151,17 @@
 
         function reloadTable() {
             dataTable.ajax.reload();
+        }
+
+        function print(x) {
+            var id=$(x).data('panel-id');
+
+            let url = "{{ route('prescription.get', ':id') }}";
+            url = url.replace(':id', id);
+            // document.location.href=url;
+            window.open(url,'_blank');
+
+            // alert('id');
         }
 
         function startInQueue(x) {

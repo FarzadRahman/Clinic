@@ -215,9 +215,10 @@
                             '  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">\n' +
                             '  </button>\n' +
                             '  <div class="dropdown-menu">\n' +
-                            '    <a class="dropdown-item" onclick="startInQueue(this)" data-panel-id="'+data.appointmentId+'">In</a>\n' +
-                            '    <a class="dropdown-item" onclick="edit(this)" data-panel-id="'+data.appointmentId+'">Edit</a>\n' +
-                            '    <a class="dropdown-item" onclick="cancel(this)" data-panel-id="'+data.appointmentId+'">Cancel</a>\n' +
+                            '    <a class="dropdown-item" onclick="startInQueue(this)" data-panel-id="'+data.appointmentId+'"><i class="fas fa-sign-in-alt"></i> In</a>\n' +
+                            '    <a class="dropdown-item" onclick="edit(this)" data-panel-id="'+data.appointmentId+'"><i class="fa fa-edit"></i>  Edit</a>\n' +
+                            '    <a class="dropdown-item" onclick="print(this)" data-panel-id="'+data.appointmentId+'"><i class="fa fa-print"></i> Print</a>\n' +
+                            '    <a class="dropdown-item" onclick="cancel(this)" data-panel-id="'+data.appointmentId+'"><i class="fas fa-window-close"></i> Cancel</a>\n' +
                             '  </div>\n' +
                             '</div> ';
                         },
@@ -228,6 +229,17 @@
 
         function reloadTable() {
             dataTable.ajax.reload();
+        }
+
+        function print(x) {
+            var id=$(x).data('panel-id');
+
+            let url = "{{ route('prescription.get', ':id') }}";
+            url = url.replace(':id', id);
+            // document.location.href=url;
+            window.open(url,'_blank');
+
+            // alert('id');
         }
 
         function startInQueue(x) {
